@@ -4,127 +4,257 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ProfitPilot</title>
+<meta name="theme-color" content="#101827">
+<title>ProfitPilot V2</title>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#101827;color:#f1f5f9;font-family:Arial,sans-serif}
 header{padding:22px 18px;background:#172338}
-h1{margin:0;color:#55d6a3;font-size:25px}
+h1{margin:0;color:#55d6a3;font-size:26px}
 header p{color:#aab7ca;margin:7px 0 0;font-size:13px}
-main{padding:16px;max-width:700px;margin:auto}
-.card{background:#1b2a40;padding:17px;border-radius:14px;margin-bottom:14px}
+main{padding:15px;max-width:760px;margin:auto}
+nav{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px}
+nav button{min-width:100px;background:#293b55;color:white}
+button{border:0;border-radius:9px;padding:12px 15px;font-weight:bold;cursor:pointer}
+nav button.active,.primary{background:#55d6a3;color:#10251e}
+.card{background:#1b2a40;padding:16px;border-radius:13px;margin-bottom:14px}
 h2{font-size:17px;margin:0 0 12px}
-p{color:#bac8d9;font-size:14px;line-height:1.5}
-input,select{width:100%;padding:13px;border:1px solid #40516b;border-radius:8px;background:#101827;color:white;margin:7px 0 12px}
-button{background:#55d6a3;color:#10251e;border:0;border-radius:8px;padding:13px 17px;font-weight:bold;width:100%;font-size:15px}
-.stat{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #34445b;font-size:14px}
-.muted{color:#91a3ba;font-size:12px}
-nav{display:flex;gap:8px;overflow:auto;margin-bottom:15px}
-nav button{min-width:105px;background:#293b55;color:white}
-nav button.active{background:#55d6a3;color:#10251e}
+p{color:#bac8d9;font-size:13px;line-height:1.5}
+input{width:100%;padding:13px;border:1px solid #40516b;border-radius:8px;background:#101827;color:white;margin:7px 0 12px}
+.primary{width:100%;font-size:14px}
+.stat{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #34445b;font-size:13px}
+.stock{background:#243750;padding:13px;border-radius:10px;margin:10px 0}
+.stock-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.stock-name{font-weight:bold;font-size:16px}
+.score{color:#55d6a3;font-weight:bold;font-size:18px}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.metric{background:#172338;padding:9px;border-radius:7px;font-size:12px;color:#b9c9da}
+.metric b{display:block;color:white;margin-top:5px;font-size:14px}
+.muted{color:#91a3ba;font-size:11px}
+.status{padding:10px;border-radius:8px;background:#172338;color:#bac8d9;font-size:13px}
+.good{color:#55d6a3}
+.warn{color:#ffc66d}
+.bad{color:#ff8585}
 .hidden{display:none}
 </style>
 </head>
+
 <body>
 <header>
-<h1>🚀 ProfitPilot</h1>
-<p>Indian Stock Scanner | Intraday & Swing Trading</p>
+<h1>🚀 ProfitPilot V2</h1>
+<p>Indian Stock Scanner | Intraday & Swing Research</p>
 </header>
+
 <main>
 <nav>
-<button class="active" onclick="show('home',this)">Dashboard</button>
-<button onclick="show('scanner',this)">Scanner</button>
-<button onclick="show('backtest',this)">Backtest</button>
-<button onclick="show('risk',this)">Risk</button>
+<button class="active" onclick="showTab('dashboard',this)">Dashboard</button>
+<button onclick="showTab('scanner',this)">Scanner</button>
+<button onclick="showTab('watchlist',this)">Watchlist</button>
+<button onclick="showTab('risk',this)">Risk Calculator</button>
 </nav>
 
-<section id="home">
+<section id="dashboard">
 <div class="card">
-<h2>Welcome to ProfitPilot</h2>
-<p>Your Indian stock research and profit-booking workspace.</p>
-<div class="stat"><span>Market</span><b>NSE / BSE</b></div>
-<div class="stat"><span>Strategies</span><b>Intraday + Swing</b></div>
-<div class="stat"><span>Risk approach</span><b>Balanced</b></div>
+<h2>Market Scanner</h2>
+<div class="stat"><span>Stocks scanned</span><b id="count">--</b></div>
+<div class="stat"><span>Stocks shortlisted</span><b id="shortlisted">--</b></div>
+<div class="stat"><span>Last updated</span><b id="updated">--</b></div>
+<p class="muted">Based on the latest available daily market data. Not a live pre-market feed.</p>
+<button class="primary" onclick="loadScanner()">↻ Refresh Scanner</button>
 </div>
+
 <div class="card">
-<h2>Today's Scanner</h2>
-<p>Market data connection is not configured yet. No live recommendations are being generated.</p>
+<h2>Top Stock Opportunities</h2>
+<div id="dashboard-results">
+<div class="status">Loading scanner results...</div>
+</div>
 </div>
 </section>
 
 <section id="scanner" class="hidden">
 <div class="card">
-<h2>Stock Scanner</h2>
-<p>Enter an NSE ticker to add it to your research watchlist.</p>
-<input id="ticker" placeholder="Example: RELIANCE">
-<button onclick="addStock()">Add to Watchlist</button>
-<div id="stocks"></div>
-<p class="muted">Watchlist entries are saved in this browser only. Live price and signal data will be connected separately.</p>
+<h2>All Scanner Results</h2>
+<p>Ranked by ProfitPilot's technical score. Higher scores indicate stronger combinations of trend, momentum, volume and breakout conditions, not guaranteed returns.</p>
+<div id="scanner-results">
+<div class="status">Loading results...</div>
+</div>
 </div>
 </section>
 
-<section id="backtest" class="hidden">
+<section id="watchlist" class="hidden">
 <div class="card">
-<h2>Historical Backtesting</h2>
-<p>Backtesting will be enabled after connecting a reliable historical market-data source.</p>
-<div class="stat"><span>Verified success rate</span><b>Not available yet</b></div>
-<div class="stat"><span>Historical returns</span><b>Not available yet</b></div>
+<h2>My Watchlist</h2>
+<input id="ticker" placeholder="Enter NSE symbol e.g. RELIANCE">
+<button class="primary" onclick="addStock()">Add Stock</button>
+<div id="stocks"></div>
 </div>
 </section>
 
 <section id="risk" class="hidden">
 <div class="card">
 <h2>Position Size Calculator</h2>
-<label>Investment amount (₹)</label>
-<input type="number" id="capital" placeholder="Example: 50000">
+<label>Available capital (₹)</label>
+<input type="number" id="capital" placeholder="50000">
 <label>Maximum risk per trade (%)</label>
 <input type="number" id="riskpct" value="1">
 <label>Entry price (₹)</label>
-<input type="number" id="entry" placeholder="Example: 250">
+<input type="number" id="entry" placeholder="250">
 <label>Stop-loss price (₹)</label>
-<input type="number" id="stop" placeholder="Example: 240">
-<button onclick="calculate()">Calculate Position Size</button>
-<div id="result"></div>
+<input type="number" id="stop" placeholder="240">
+<button class="primary" onclick="calculate()">Calculate</button>
+<div id="risk-result"></div>
 </div>
 </section>
 
-<p class="muted">For research and education only. Not investment advice. No trade execution.</p>
+<div class="card">
+<h2>Important Disclaimer</h2>
+<p>ProfitPilot is a research and educational tool, not investment advice. Historical signals do not guarantee future returns. Verify prices, corporate announcements and liquidity before making decisions. No trade execution is performed.</p>
+<p class="muted">Market data: Yahoo Finance via unofficial yfinance access. Data may be delayed, incomplete or unavailable.</p>
+</div>
 </main>
 
 <script>
-function show(id,btn){
+let scannerData=[];
+
+function showTab(id,button){
 document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
 document.getElementById(id).classList.remove('hidden');
 document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-btn.classList.add('active');
+button.classList.add('active');
 }
-function addStock(){
-let v=document.getElementById('ticker').value.trim().toUpperCase();
-if(!v)return;
-let list=JSON.parse(localStorage.getItem('ppstocks')||'[]');
-if(!list.includes(v))list.push(v);
-localStorage.setItem('ppstocks',JSON.stringify(list));
-document.getElementById('ticker').value='';
-renderStocks();
+
+function safeNumber(value,digits=2){
+const n=Number(value);
+return Number.isFinite(n)?n.toFixed(digits):'--';
 }
-function renderStocks(){
-let list=JSON.parse(localStorage.getItem('ppstocks')||'[]');
-document.getElementById('stocks').innerHTML=list.map(x=>'<div class="stat"><span>'+x+'</span><b>Watchlist</b></div>').join('');
+
+function stockCard(stock){
+const score=Number(stock.score)||0;
+const signal=String(stock.signal||'Watch');
+const color=score>=70?'good':score>=50?'warn':'';
+const symbol=String(stock.symbol||'Unknown');
+
+return `
+<div class="stock">
+<div class="stock-head">
+<div>
+<div class="stock-name">${escapeHTML(symbol)}</div>
+<div class="muted">${escapeHTML(signal)}</div>
+</div>
+<div class="score ${color}">${safeNumber(score,0)}/100</div>
+</div>
+<div class="metrics">
+<div class="metric">Price<b>₹${safeNumber(stock.price)}</b></div>
+<div class="metric">Daily change<b>${safeNumber(stock.daily_change_pct)}%</b></div>
+<div class="metric">5-day return<b>${safeNumber(stock.return_5d_pct)}%</b></div>
+<div class="metric">20-day return<b>${safeNumber(stock.return_20d_pct)}%</b></div>
+<div class="metric">Volume ratio<b>${safeNumber(stock.volume_ratio)}x</b></div>
+<div class="metric">RSI<b>${safeNumber(stock.rsi,1)}</b></div>
+</div>
+</div>`;
 }
-function calculate(){
-let c=Number(document.getElementById('capital').value);
-let r=Number(document.getElementById('riskpct').value);
-let e=Number(document.getElementById('entry').value);
-let s=Number(document.getElementById('stop').value);
-if(!c||!e||!s||e<=s||r<=0){
-document.getElementById('result').innerText='Enter valid values. Stop-loss must be below entry.';
+
+function escapeHTML(value){
+return String(value).replace(/[&<>"']/g,char=>({
+'&':'&amp;','<':'&lt;','>':'&gt;',
+'"':'&quot;',"'":'&#39;'
+}[char]));
+}
+
+async function loadScanner(){
+const dashboard=document.getElementById('dashboard-results');
+const all=document.getElementById('scanner-results');
+
+dashboard.innerHTML='<div class="status">Fetching latest scanner results...</div>';
+all.innerHTML='<div class="status">Fetching latest scanner results...</div>';
+
+try{
+const response=await fetch('./scanner.json?refresh='+Date.now(),{
+cache:'no-store'
+});
+
+if(!response.ok)throw new Error('Could not find scanner.json. Check whether the GitHub scan completed.');
+
+const data=await response.json();
+scannerData=Array.isArray(data.results)?data.results:[];
+scannerData.sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0));
+
+document.getElementById('count').textContent=data.stocks_scanned??'--';
+document.getElementById('shortlisted').textContent=scannerData.filter(s=>Number(s.score)>=50).length;
+
+const date=data.generated_at?new Date(data.generated_at):null;
+document.getElementById('updated')=null;
+document.getElementById('updated').textContent=
+date&&!isNaN(date)?date.toLocaleString():'Unavailable';
+
+if(scannerData.length===0){
+dashboard.innerHTML='<div class="status warn">No stock data returned. Try another scan later.</div>';
+all.innerHTML=dashboard.innerHTML;
 return;
 }
-let risk=c*r/100;
-let qty=Math.floor(risk/(e-s));
-document.getElementById('result').innerHTML='<div class="stat"><span>Risk amount</span><b>₹'+risk.toFixed(2)+'</b></div><div class="stat"><span>Suggested quantity</span><b>'+qty+' shares</b></div><div class="stat"><span>Approx. investment</span><b>₹'+(qty*e).toFixed(2)+'</b></div>';
+
+dashboard.innerHTML=scannerData.slice(0,5).map(stockCard).join('');
+all.innerHTML=scannerData.map(stockCard).join('');
+
+}catch(error){
+const message='<div class="status warn">'+escapeHTML(error.message)+'</div>';
+dashboard.innerHTML=message;
+all.innerHTML=message;
 }
+}
+
+function addStock(){
+const input=document.getElementById('ticker');
+const value=input.value.trim().toUpperCase().replace(/\.NS$/,'');
+if(!/^[A-Z0-9&-]{1,20}$/.test(value)){
+alert('Enter a valid NSE stock symbol.');
+return;
+}
+let list=JSON.parse(localStorage.getItem('ppstocks')||'[]');
+if(!list.includes(value))list.push(value);
+localStorage.setItem('ppstocks',JSON.stringify(list));
+input.value='';
 renderStocks();
+}
+
+function removeStock(value){
+let list=JSON.parse(localStorage.getItem('ppstocks')||'[]');
+list=list.filter(x=>x!==value);
+localStorage.setItem('ppstocks',JSON.stringify(list));
+renderStocks();
+}
+
+function renderStocks(){
+const list=JSON.parse(localStorage.getItem('ppstocks')||'[]');
+document.getElementById('stocks').innerHTML=list.length?
+list.map(x=>`<div class="stat"><b>${escapeHTML(x)}</b><button onclick="removeStock('${escapeHTML(x)}')">Remove</button></div>`).join(''):
+'<p class="muted">Your watchlist is empty.</p>';
+}
+
+function calculate(){
+const c=Number(document.getElementById('capital').value);
+const r=Number(document.getElementById('riskpct').value);
+const e=Number(document.getElementById('entry').value);
+const s=Number(document.getElementById('stop').value);
+const output=document.getElementById('risk-result');
+
+if(!c||!r||!e||!s||c<=0||r<=0||r>100||e<=s){
+output.innerHTML='<p class="bad">Enter valid values. Stop-loss must be below entry.</p>';
+return;
+}
+
+const risk=c*r/100;
+const qty=Math.floor(risk/(e-s));
+output.innerHTML=`
+<div class="stat"><span>Maximum risk</span><b>₹${risk.toFixed(2)}</b></div>
+<div class="stat"><span>Suggested quantity</span><b>${qty} shares</b></div>
+<div class="stat"><span>Approx. investment</span><b>₹${(qty*e).toFixed(2)}</b></div>
+<p class="muted">This calculation excludes brokerage, taxes, slippage and gaps. It is a position-sizing estimate, not a trade recommendation.</p>`;
+}
+
+renderStocks();
+loadScanner();
 </script>
 </body>
 </html>
