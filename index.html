@@ -184,7 +184,6 @@ document.getElementById('count').textContent=data.stocks_scanned??'--';
 document.getElementById('shortlisted').textContent=scannerData.filter(s=>Number(s.score)>=50).length;
 
 const date=data.generated_at?new Date(data.generated_at):null;
-document.getElementById('updated')=null;
 document.getElementById('updated').textContent=
 date&&!isNaN(date)?date.toLocaleString():'Unavailable';
 
