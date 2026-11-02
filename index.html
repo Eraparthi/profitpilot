@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ProfitPilot</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101827;color:#f1f5f9;font-family:Arial,sans-serif}
+header{padding:22px 18px;background:#172338}
+h1{margin:0;color:#55d6a3;font-size:25px}
+header p{color:#aab7ca;margin:7px 0 0;font-size:13px}
+main{padding:16px;max-width:700px;margin:auto}
+.card{background:#1b2a40;padding:17px;border-radius:14px;margin-bottom:14px}
+h2{font-size:17px;margin:0 0 12px}
+p{color:#bac8d9;font-size:14px;line-height:1.5}
+input,select{width:100%;padding:13px;border:1px solid #40516b;border-radius:8px;background:#101827;color:white;margin:7px 0 12px}
+button{background:#55d6a3;color:#10251e;border:0;border-radius:8px;padding:13px 17px;font-weight:bold;width:100%;font-size:15px}
+.stat{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #34445b;font-size:14px}
+.muted{color:#91a3ba;font-size:12px}
+nav{display:flex;gap:8px;overflow:auto;margin-bottom:15px}
+nav button{min-width:105px;background:#293b55;color:white}
+nav button.active{background:#55d6a3;color:#10251e}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header>
+<h1>🚀 ProfitPilot</h1>
+<p>Indian Stock Scanner | Intraday & Swing Trading</p>
+</header>
+<main>
+<nav>
+<button class="active" onclick="show('home',this)">Dashboard</button>
+<button onclick="show('scanner',this)">Scanner</button>
+<button onclick="show('backtest',this)">Backtest</button>
+<button onclick="show('risk',this)">Risk</button>
+</nav>
+
+<section id="home">
+<div class="card">
+<h2>Welcome to ProfitPilot</h2>
+<p>Your Indian stock research and profit-booking workspace.</p>
+<div class="stat"><span>Market</span><b>NSE / BSE</b></div>
+<div class="stat"><span>Strategies</span><b>Intraday + Swing</b></div>
+<div class="stat"><span>Risk approach</span><b>Balanced</b></div>
+</div>
+<div class="card">
+<h2>Today's Scanner</h2>
+<p>Market data connection is not configured yet. No live recommendations are being generated.</p>
+</div>
+</section>
+
+<section id="scanner" class="hidden">
+<div class="card">
+<h2>Stock Scanner</h2>
+<p>Enter an NSE ticker to add it to your research watchlist.</p>
+<input id="ticker" placeholder="Example: RELIANCE">
+<button onclick="addStock()">Add to Watchlist</button>
+<div id="stocks"></div>
+<p class="muted">Watchlist entries are saved in this browser only. Live price and signal data will be connected separately.</p>
+</div>
+</section>
+
+<section id="backtest" class="hidden">
+<div class="card">
+<h2>Historical Backtesting</h2>
+<p>Backtesting will be enabled after connecting a reliable historical market-data source.</p>
+<div class="stat"><span>Verified success rate</span><b>Not available yet</b></div>
+<div class="stat"><span>Historical returns</span><b>Not available yet</b></div>
+</div>
+</section>
+
+<section id="risk" class="hidden">
+<div class="card">
+<h2>Position Size Calculator</h2>
+<label>Investment amount (₹)</label>
+<input type="number" id="capital" placeholder="Example: 50000">
+<label>Maximum risk per trade (%)</label>
+<input type="number" id="riskpct" value="1">
+<label>Entry price (₹)</label>
+<input type="number" id="entry" placeholder="Example: 250">
+<label>Stop-loss price (₹)</label>
+<input type="number" id="stop" placeholder="Example: 240">
+<button onclick="calculate()">Calculate Position Size</button>
+<div id="result"></div>
+</div>
+</section>
+
+<p class="muted">For research and education only. Not investment advice. No trade execution.</p>
+</main>
+
+<script>
+function show(id,btn){
+document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
+document.getElementById(id).classList.remove('hidden');
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+}
+function addStock(){
+let v=document.getElementById('ticker').value.trim().toUpperCase();
+if(!v)return;
+let list=JSON.parse(localStorage.getItem('ppstocks')||'[]');
+if(!list.includes(v))list.push(v);
+localStorage.setItem('ppstocks',JSON.stringify(list));
+document.getElementById('ticker').value='';
+renderStocks();
+}
+function renderStocks(){
+let list=JSON.parse(localStorage.getItem('ppstocks')||'[]');
+document.getElementById('stocks').innerHTML=list.map(x=>'<div class="stat"><span>'+x+'</span><b>Watchlist</b></div>').join('');
+}
+function calculate(){
+let c=Number(document.getElementById('capital').value);
+let r=Number(document.getElementById('riskpct').value);
+let e=Number(document.getElementById('entry').value);
+let s=Number(document.getElementById('stop').value);
+if(!c||!e||!s||e<=s||r<=0){
+document.getElementById('result').innerText='Enter valid values. Stop-loss must be below entry.';
+return;
+}
+let risk=c*r/100;
+let qty=Math.floor(risk/(e-s));
+document.getElementById('result').innerHTML='<div class="stat"><span>Risk amount</span><b>₹'+risk.toFixed(2)+'</b></div><div class="stat"><span>Suggested quantity</span><b>'+qty+' shares</b></div><div class="stat"><span>Approx. investment</span><b>₹'+(qty*e).toFixed(2)+'</b></div>';
+}
+renderStocks();
+</script>
+</body>
+</html>
