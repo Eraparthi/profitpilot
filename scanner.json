@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-09T21:36:29.540417+00:00",
+  "generated_at": "2026-11-10T18:47:32.948800+00:00",
   "data_note": "Unofficial Yahoo Finance daily data. Not live or pre-market data.",
   "stocks_scanned": 35,
-  "stocks_found": 34,
-  "stocks_failed": 1,
+  "stocks_found": 33,
+  "stocks_failed": 2,
   "results": [
     {
       "symbol": "ICICIBANK",
@@ -110,6 +110,19 @@
       "signal": "Watch"
     },
     {
+      "symbol": "HINDALCO",
+      "price": 960.0,
+      "daily_change_pct": 0.17,
+      "return_5d_pct": 5.33,
+      "return_20d_pct": 6.63,
+      "volume_ratio": 1.99,
+      "rsi": 62.5,
+      "ema20": 920.58,
+      "ema50": 940.92,
+      "score": 64.2,
+      "signal": "Watch"
+    },
+    {
       "symbol": "SUNPHARMA",
       "price": 1904.5,
       "daily_change_pct": 2.39,
@@ -120,19 +133,6 @@
       "ema20": 1797.34,
       "ema50": 1817.87,
       "score": 64.2,
-      "signal": "Watch"
-    },
-    {
-      "symbol": "HINDALCO",
-      "price": 960.0,
-      "daily_change_pct": 0.17,
-      "return_5d_pct": 5.33,
-      "return_20d_pct": 6.63,
-      "volume_ratio": 1.99,
-      "rsi": 62.5,
-      "ema20": 920.58,
-      "ema50": 940.92,
-      "score": 64.1,
       "signal": "Watch"
     },
     {
@@ -193,7 +193,7 @@
       "daily_change_pct": -0.78,
       "return_5d_pct": 4.22,
       "return_20d_pct": 6.36,
-      "volume_ratio": 2.23,
+      "volume_ratio": 2.24,
       "rsi": 61.4,
       "ema20": 177.29,
       "ema50": 179.68,
@@ -331,19 +331,6 @@
       "signal": "Low priority"
     },
     {
-      "symbol": "HCLTECH",
-      "price": 1407.0,
-      "daily_change_pct": -2.29,
-      "return_5d_pct": -1.88,
-      "return_20d_pct": 16.67,
-      "volume_ratio": 0.79,
-      "rsi": 58.4,
-      "ema20": 1385.03,
-      "ema50": 1328.35,
-      "score": 40,
-      "signal": "Low priority"
-    },
-    {
       "symbol": "HAL",
       "price": 4999.0,
       "daily_change_pct": 0.38,
@@ -401,7 +388,7 @@
       "daily_change_pct": 0.99,
       "return_5d_pct": 7.09,
       "return_20d_pct": -2.46,
-      "volume_ratio": 0.76,
+      "volume_ratio": 0.77,
       "rsi": 53.3,
       "ema20": 414.08,
       "ema50": 417.39,
@@ -449,6 +436,10 @@
     }
   ],
   "failed": [
+    {
+      "symbol": "HCLTECH",
+      "reason": "No valid analysis produced"
+    },
     {
       "symbol": "TATAMOTORS",
       "reason": "No valid analysis produced"
