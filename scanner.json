@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-10T18:47:32.948800+00:00",
+  "generated_at": "2026-11-11T18:51:14.973633+00:00",
   "data_note": "Unofficial Yahoo Finance daily data. Not live or pre-market data.",
   "stocks_scanned": 35,
-  "stocks_found": 33,
-  "stocks_failed": 2,
+  "stocks_found": 34,
+  "stocks_failed": 1,
   "results": [
     {
       "symbol": "ICICIBANK",
@@ -331,6 +331,19 @@
       "signal": "Low priority"
     },
     {
+      "symbol": "HCLTECH",
+      "price": 1407.0,
+      "daily_change_pct": -2.29,
+      "return_5d_pct": -1.88,
+      "return_20d_pct": 16.67,
+      "volume_ratio": 0.79,
+      "rsi": 58.4,
+      "ema20": 1385.03,
+      "ema50": 1328.35,
+      "score": 40,
+      "signal": "Low priority"
+    },
+    {
       "symbol": "HAL",
       "price": 4999.0,
       "daily_change_pct": 0.38,
@@ -436,10 +449,6 @@
     }
   ],
   "failed": [
-    {
-      "symbol": "HCLTECH",
-      "reason": "No valid analysis produced"
-    },
     {
       "symbol": "TATAMOTORS",
       "reason": "No valid analysis produced"
